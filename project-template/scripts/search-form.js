@@ -1,22 +1,30 @@
-import { fetchHomeApi, renderBlock } from './lib.js';
-import { renderSearchResultsBlock } from './search-results.js';
-const TWO_DAYS = 2;
-const ONE_MONTH = 1;
-const TWO_MONTHS = 2;
+import { renderBlock } from './lib.js'
+import { IPlaces, ISearchFormData } from './interfaces.js'
+
+const TWO_DAYS = 2
+const ONE_MONTH = 1
+const TWO_MONTHS = 2
+
 const getStringFromDate = (date) => {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + ONE_MONTH).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-const getDateFromString = (date) => new Date(+date.split('-')[0], +date.split('-')[1], +date.split('-')[2]);
+  const year = date.getFullYear()
+  const month = (date.getMonth() + ONE_MONTH).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+const getDateFromString = (date) => new Date(+date.split('-')[0], +date.split('-')[1], +date.split('-')[2])
+
 const minDate = new Date();
-const maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + ONE_MONTH, (new Date(minDate.getFullYear(), minDate.getMonth() + TWO_MONTHS, 0)).getDate());
-const minCheckoutDate = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate() + TWO_DAYS);
+const maxDate = new Date(minDate.getFullYear(), minDate.getMonth() + ONE_MONTH, (new Date(minDate.getFullYear(), minDate.getMonth() + TWO_MONTHS, 0)).getDate())
+const minCheckoutDate = new Date(minDate.getFullYear(), minDate.getMonth(), minDate.getDate() + TWO_DAYS)
+
 export function renderSearchFormBlock(dateStart = getStringFromDate(minDate), dateEnd = getStringFromDate(minCheckoutDate)) {
-    const dateStartFromString = getDateFromString(dateStart);
-    const dateEndFromString = getDateFromString(dateEnd);
-    renderBlock('search-form-block', `
+  const dateStartFromString = getDateFromString(dateStart)
+  const dateEndFromString = getDateFromString(dateEnd)
+
+  renderBlock(
+    'search-form-block',
+    `
     <form action="#" id="searchForm">
       <fieldset class="search-filedset">
         <div class="row">
@@ -49,25 +57,49 @@ export function renderSearchFormBlock(dateStart = getStringFromDate(minDate), da
         </div>
       </fieldset>
     </form>
-    `);
-    document.querySelector('form#searchForm').addEventListener('submit', getSearchFormData);
+    `
+  )
+
+  document.querySelector('form#searchForm').addEventListener('submit', getSearchFormData)
 }
+
 function getSearchFormData(e) {
-    e.preventDefault();
-    const form = new FormData(document.querySelector('form#searchForm'));
-    const searchFormData = {
-        coordinates: form.get('coordinates').toString(),
-        checkInDate: getDateFromString(form.get('check-in-date').toString()).getTime(),
-        checkOutDate: getDateFromString(form.get('check-out-date').toString()).getTime(),
-    };
-    const formPrice = parseInt(form.get('price').toString());
-    isNaN(formPrice) || formPrice < 1 ? null : searchFormData.maxPrice = formPrice;
-    search(searchFormData, renderSearchResultsBlock);
+  e.preventDefault();
+
+  const form = new FormData(document.querySelector('form#searchForm'))
+
+  const formValues = {
+    city: form.get('city').toString(),
+    coordinates: [parseFloat(form.get('coordinates').toString().split(',')[0]), parseFloat(form.get('coordinates').toString().split(',')[1])],
+    checkInDate: getDateFromString(form.get('check-in-date').toString()),
+    checkOutDate: getDateFromString(form.get('check-out-date').toString()),
+    maxPrice: isNaN(parseInt(form.get('price').toString())) ? 0 : parseInt(form.get('price').toString())
+  }
+
+  const searchFormData: ISearchFormData = {
+    'city': formValues.city,
+    'coordinates': [formValues.coordinates[0], formValues.coordinates[1]],
+    'check-in-date': formValues.checkInDate,
+    'check-out-date': formValues.checkOutDate,
+    'max-price': formValues.maxPrice
+  }
+
+  search(searchFormData, delay)
 }
-export function search(params, render) {
-    fetchHomeApi({
-        method: 'GET',
-        endPoint: '/places',
-        parameters: params
-    }).then((places) => render(places));
+
+export function search(params: ISearchFormData, render: (err, places?: IPlaces[]) => void): void {
+  setTimeout(() => {
+    const rand = Math.random() * 10
+    rand >= 5 ? render(new Error('Ошбика поиска')) : render(null, [])
+  }, 2000)
+}
+
+function delay(err, places) {
+  if (err) {
+    throw err
+  }
+
+  if (places) {
+    console.log(places);
+  }
 }

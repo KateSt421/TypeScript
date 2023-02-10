@@ -1,22 +1,33 @@
-import { renderBlock } from './lib.js';
+import { renderBlock } from './lib.js'
+
 export function renderSearchStubBlock() {
-    renderBlock('search-results-block', `
+  renderBlock(
+    'search-results-block',
+    `
     <div class="before-results-block">
       <img src="img/start-search.png" />
       <p>Чтобы начать поиск, заполните форму и&nbsp;нажмите "Найти"</p>
     </div>
-    `);
+    `
+  )
 }
+
 export function renderEmptyOrErrorSearchBlock(reasonMessage) {
-    renderBlock('search-results-block', `
+  renderBlock(
+    'search-results-block',
+    `
     <div class="no-results-block">
       <img src="img/no-results.png" />
       <p>${reasonMessage}</p>
     </div>
-    `);
+    `
+  )
 }
+
 export function renderSearchResultsBlock() {
-    renderBlock('search-results-block', `
+  renderBlock(
+    'search-results-block',
+    `
     <div class="search-results-header">
         <p>Результаты поиска</p>
         <div class="search-results-filter">
@@ -34,7 +45,7 @@ export function renderSearchResultsBlock() {
           <div class="result-img-container">
             <div class="favorites active"></div>
             <img class="result-img" src="./img/result-1.png" alt="">
-          </div>
+          </div>	
           <div class="result-info">
             <div class="result-info--header">
               <p>YARD Residence Apart-hotel</p>
@@ -55,7 +66,7 @@ export function renderSearchResultsBlock() {
           <div class="result-img-container">
             <div class="favorites"></div>
             <img class="result-img" src="./img/result-2.png" alt="">
-          </div>
+          </div>	
           <div class="result-info">
             <div class="result-info--header">
               <p>Akyan St.Petersburg</p>
@@ -72,5 +83,6 @@ export function renderSearchResultsBlock() {
         </div>
       </li>
     </ul>
-    `);
+    `
+  )
 }
