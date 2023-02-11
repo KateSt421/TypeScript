@@ -13,7 +13,4 @@ window.addEventListener('DOMContentLoaded', () => {
     )
 })
 
-/* Для тестирования user из localStorage */
-localStorage.setItem('user', JSON.stringify({
-    username: 'Wade Warren', avatarUrl: '/img/avatar.png'
-}));
+localStorage.setItem('user', JSON.stringify({ username: 'Wade Warren', avatarUrl: '/img/avatar.png' }));
